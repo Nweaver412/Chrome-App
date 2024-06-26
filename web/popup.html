@@ -43,22 +43,6 @@
       background-color: #ffcccc;
     }
   </style>
-  <script>
-    function updateStatus(connected) {
-      const statusDiv = document.getElementById('status');
-      if (connected) {
-        statusDiv.className = 'status-connected';
-        statusDiv.innerHTML = 'Status: Connected';
-      } else {
-        statusDiv.className = 'status-disconnected';
-        statusDiv.innerHTML = 'Status: Disconnected';
-      }
-    }
-  
-    // Example usage (simulate connection status change)
-    document.getElementById('connectBtn').onclick = () => updateStatus(true);
-    document.getElementById('disconnectBtn').onclick = () => updateStatus(false);
-  </script>
 </head>
 <body>
   <button id="connectBtn">Connect</button>

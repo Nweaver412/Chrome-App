@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "Real-time Collaborative Browser",
-    "version": "1.0",
+    "name": "Collaborative Browser",
+    "version": "1.0.1",
     "description": "Allow users to collaboratively browse and interact with web pages in real time.",
     "permissions": [
       "activeTab"
@@ -11,15 +11,24 @@
       "https://*/*"
     ],
     "background": {
-      "service_worker": "background.js"
+      "service_worker": "web/background.js"
     },
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
-        "js": ["content.js"]
+        "js": ["web/content.js"]
       }
     ],
     "action": {
-      "default_popup": "popup.html"
+      "default_popup": "web/popup.html",
+      "default_icon": {
+        "96": "assets/icon96.png",
+        "128": "assets/icon128.png"
+      }
+    },
+    "icons": {
+      "96": "assets/icon96.png",
+      "128": "assets/icon128.png"
     }
   }
+  
