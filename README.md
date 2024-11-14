@@ -2,8 +2,9 @@
 
 This Chrome Extension allows you to easily access the GitHub repositories that you have collaborator access to. It fetches and displays a list of repositories shared with you by other users, grouped by the owner's username.
 
-![Local Image](./image.png)
-
+<p align="center">
+  <img src=./image.png" width="300" />
+</p>
 
 ## Features:
 - **Save GitHub Personal Access Token**: Securely store your GitHub token for easy authentication.
