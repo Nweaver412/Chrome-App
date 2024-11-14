@@ -1,4 +1,3 @@
-// Event listener to save the GitHub token securely
 document.getElementById('saveToken').addEventListener('click', () => {
   const token = document.getElementById('token').value;
   chrome.storage.sync.set({ githubToken: token }, () => {
@@ -6,7 +5,6 @@ document.getElementById('saveToken').addEventListener('click', () => {
   });
 });
 
-// Event listener to fetch shared projects
 document.getElementById('fetch').addEventListener('click', async () => {
   chrome.storage.sync.get('githubToken', async (items) => {
     const token = items.githubToken;
@@ -16,9 +14,8 @@ document.getElementById('fetch').addEventListener('click', async () => {
     }
 
     const projectsList = document.getElementById('projects');
-    projectsList.innerHTML = ''; // Clear the project list
+    projectsList.innerHTML = '';
 
-    // Fetch authenticated user's information
     const userResponse = await fetch('https://api.github.com/user', {
       headers: {
         'Authorization': `token ${token}`
@@ -33,7 +30,6 @@ document.getElementById('fetch').addEventListener('click', async () => {
     const user = await userResponse.json();
     const username = user.login;
 
-    // Fetch repositories with collaborator access
     const reposResponse = await fetch('https://api.github.com/user/repos?affiliation=collaborator', {
       headers: {
         'Authorization': `token ${token}`
@@ -46,13 +42,11 @@ document.getElementById('fetch').addEventListener('click', async () => {
     }
 
     const repos = await reposResponse.json();
-    // Filter for repositories where the user is a collaborator but not the owner, and are public or shared repos
     const sharedRepos = repos.filter(repo => 
       repo.owner.login !== username && 
       (repo.permissions.push || repo.permissions.pull)
     );
 
-    // Group repositories by owner
     const groupedRepos = sharedRepos.reduce((acc, repo) => {
       if (!acc[repo.owner.login]) {
         acc[repo.owner.login] = [];
@@ -61,7 +55,6 @@ document.getElementById('fetch').addEventListener('click', async () => {
       return acc;
     }, {});
 
-    // Display grouped repositories
     Object.keys(groupedRepos).forEach(owner => {
       const ownerHeading = document.createElement('h3');
       ownerHeading.textContent = owner;

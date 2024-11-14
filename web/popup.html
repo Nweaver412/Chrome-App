@@ -3,7 +3,7 @@
 <head>
   <title>GitHub Shared Projects</title>
   <style>
-    /* General styling */
+    /* General */
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
       background-color: #f6f8fa;
@@ -13,7 +13,7 @@
       width: 300px;
     }
 
-    /* Dark mode styling */
+    /* Dark mode */
     @media (prefers-color-scheme: dark) {
       body {
         background-color: #0d1117;
@@ -34,7 +34,7 @@
       margin-bottom: 8px;
     }
 
-    /* Token input styling */
+    /* Token input */
     input[type="password"] {
       width: 100%;
       padding: 8px;
@@ -45,7 +45,7 @@
       box-sizing: border-box;
     }
 
-    /* Button styling */
+    /* Button */
     button {
       background-color: #2ea44f;
       color: #fff;
@@ -63,7 +63,7 @@
       background-color: #2c974b;
     }
 
-    /* Project list styling */
+    /* Project list */
     ul {
       list-style: none;
       padding: 0;
@@ -83,7 +83,7 @@
       }
     }
 
-    /* Link styling */
+    /* Link */
     a {
       color: #0969da;
       text-decoration: none;
@@ -97,11 +97,9 @@
 <body>
   <h2>GitHub Shared Projects</h2>
 
-  <!-- Field to enter and save GitHub token -->
   <input type="password" id="token" placeholder="GitHub Personal Access Token">
   <button id="saveToken">Save Token</button>
 
-  <!-- Field and button to fetch shared projects -->
   <button id="fetch">Fetch Shared Projects</button>
   <ul id="projects"></ul>
 
