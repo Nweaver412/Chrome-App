@@ -1,34 +1,12 @@
 {
-    "manifest_version": 3,
-    "name": "Collaborative Browser",
-    "version": "1.0.1",
-    "description": "Allow users to collaboratively browse and interact with web pages in real time.",
-    "permissions": [
-      "activeTab"
-    ],
-    "host_permissions": [
-      "http://*/*",
-      "https://*/*"
-    ],
-    "background": {
-      "service_worker": "web/background.js"
-    },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["web/content.js"]
-      }
-    ],
-    "action": {
-      "default_popup": "web/popup.html",
-      "default_icon": {
-        "96": "assets/icon96.png",
-        "128": "assets/icon128.png"
-      }
-    },
-    "icons": {
-      "96": "assets/icon96.png",
-      "128": "assets/icon128.png"
-    }
+  "manifest_version": 3,
+  "name": "GitHub Shared Projects",
+  "version": "1.0",
+  "description": "Access GitHub repositories shared with you.",
+  "permissions": ["identity", "storage"],
+  "host_permissions": ["https://api.github.com/*"],
+  "action": {
+    "default_popup": "web/popup.html",
+    "default_icon": "assets/icon96.png"
   }
-  
+}

@@ -1,49 +1,84 @@
-let isConnected = false;
-let isCollaborating = false;
-
-document.getElementById('connectBtn').addEventListener('click', () => {
-  chrome.runtime.sendMessage({type: 'connect'}, (response) => {
-    if (response.status === 'connecting' || response.status === 'connected') {
-      isConnected = true;
-      updateStatus();
-    }
+// Event listener to save the GitHub token securely
+document.getElementById('saveToken').addEventListener('click', () => {
+  const token = document.getElementById('token').value;
+  chrome.storage.sync.set({ githubToken: token }, () => {
+    alert("Token saved!");
   });
 });
 
-document.getElementById('disconnectBtn').addEventListener('click', () => {
-  chrome.runtime.sendMessage({type: 'disconnect'}, (response) => {
-    if (response.status === 'disconnected') {
-      isConnected = false;
-      isCollaborating = false;
-      updateStatus();
+// Event listener to fetch shared projects
+document.getElementById('fetch').addEventListener('click', async () => {
+  chrome.storage.sync.get('githubToken', async (items) => {
+    const token = items.githubToken;
+    if (!token) {
+      alert("Please save your GitHub token first.");
+      return;
     }
-  });
-});
 
-document.getElementById('toggleCollabBtn').addEventListener('click', () => {
-  if (isConnected) {
-    isCollaborating = !isCollaborating;
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, {type: 'toggleCollaboration', isCollaborating});
+    const projectsList = document.getElementById('projects');
+    projectsList.innerHTML = ''; // Clear the project list
+
+    // Fetch authenticated user's information
+    const userResponse = await fetch('https://api.github.com/user', {
+      headers: {
+        'Authorization': `token ${token}`
+      }
     });
-    updateStatus();
-  }
-});
 
-function updateStatus() {
-  const statusElement = document.getElementById('status');
-  if (isConnected) {
-    statusElement.className = 'status-connected';
-    statusElement.textContent = `Status: Connected${isCollaborating ? ' (Collaborating)' : ''}`;
-  } else {
-    statusElement.className = 'status-disconnected';
-    statusElement.textContent = 'Status: Disconnected';
-  }
-}
+    if (!userResponse.ok) {
+      alert("Error fetching user information.");
+      return;
+    }
 
-// Initialize status on popup open
-chrome.runtime.sendMessage({type: 'getStatus'}, (response) => {
-  isConnected = response.isConnected;
-  isCollaborating = response.isCollaborating;
-  updateStatus();
+    const user = await userResponse.json();
+    const username = user.login;
+
+    // Fetch repositories with collaborator access
+    const reposResponse = await fetch('https://api.github.com/user/repos?affiliation=collaborator', {
+      headers: {
+        'Authorization': `token ${token}`
+      }
+    });
+
+    if (!reposResponse.ok) {
+      alert("Error fetching projects.");
+      return;
+    }
+
+    const repos = await reposResponse.json();
+    // Filter for repositories where the user is a collaborator but not the owner, and are public or shared repos
+    const sharedRepos = repos.filter(repo => 
+      repo.owner.login !== username && 
+      (repo.permissions.push || repo.permissions.pull)
+    );
+
+    // Group repositories by owner
+    const groupedRepos = sharedRepos.reduce((acc, repo) => {
+      if (!acc[repo.owner.login]) {
+        acc[repo.owner.login] = [];
+      }
+      acc[repo.owner.login].push(repo);
+      return acc;
+    }, {});
+
+    // Display grouped repositories
+    Object.keys(groupedRepos).forEach(owner => {
+      const ownerHeading = document.createElement('h3');
+      ownerHeading.textContent = owner;
+      projectsList.appendChild(ownerHeading);
+
+      const ownerList = document.createElement('ul');
+      groupedRepos[owner].forEach(repo => {
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = repo.html_url;
+        link.target = "_blank";
+        link.textContent = repo.name;
+        li.appendChild(link);
+        ownerList.appendChild(li);
+      });
+
+      projectsList.appendChild(ownerList);
+    });
+  });
 });
